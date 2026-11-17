@@ -20,3 +20,7 @@ Companion plugins: claude-ledger-starter, claude-handoff-helper, claude-session-
 Created by Soroosh Hedayat
 
 Designed in Collaboration by: VectorNine Systems Inc. & Acid Secs Productions Inc.
+
+## Data handling
+
+It saves your setup choices in one small settings file on your PC. It reads no personal data. Nothing is sent to the authors of this plugin. We run no server and receive no data, so nothing is retained by us. The plugin sends nothing to any outside service. Everything it makes stays on your own PC or in your own Google Drive and Claude account, and you can delete it any time.

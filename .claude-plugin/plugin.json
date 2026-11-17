@@ -17,5 +17,6 @@
     "settings",
     "projects"
   ],
-  "icon": ".claude-plugin/icon.png"
+  "icon": ".claude-plugin/icon.png",
+  "privacyPolicyUrl": "https://github.com/AcidSecs/claude-setup-wizard#data-handling"
 }
