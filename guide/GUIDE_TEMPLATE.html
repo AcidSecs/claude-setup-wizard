@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Step-by-Step Guide</title>
+<!--
+==========================================================================
+HOW TO USE THIS TEMPLATE (instructions for any Claude session)
+==========================================================================
+Purpose: people follow multi-step jobs best from a clean, tick-box guide page.
+This file is the reusable template. Make a NEW guide by copying it. Never edit the
+original template file.
+
+WHAT TO CHANGE
+1. Change the <title> above to the guide's real name (two to four words).
+2. Change ONLY the GUIDE object near the bottom of this file. Do not touch the CSS or the
+   rendering code unless something is broken.
+3. Fill in GUIDE.title, GUIDE.subtitle and GUIDE.storageKey (a short unique name such as
+   'guide-invoice-setup-v1', so one guide's ticks never mix with another's).
+4. Fill in GUIDE.stages. Each stage is one job on one screen or place. Each step is ONE action.
+5. Optional: GUIDE.tabs adds extra tabs (what to expect, costs, rules). GUIDE.faq adds an "If stuck" tab.
+
+STEP-WRITING RULES
+- Plain everyday English, short sentences. Explain every technical word the first time.
+- Write every step out in full. Never write "as above", "same as before" or "repeat step 3".
+- Say exactly where to click, in the order the user will see it.
+- Only list steps that a human must do. Do everything else yourself, and say so in the intro.
+- Put every path, file name, number, setting and message the user must type or paste into a copy
+  chip: chips:[{l:'Folder',v:'C:\\Real\\Path'}]. Use the real value. Never a placeholder such
+  as a name in brackets. Write backslashes twice inside the string.
+- Give full folder paths with the drive letter and every folder name.
+- Mark anything not confirmed as UNCONFIRMED in a note, and say what will confirm it.
+- Never put keys, passwords or private data in the page. It may be shared.
+- Keep each stage to about eight steps or fewer. Add a time guess in each stage's time field.
+- Use the 'where' field to say which website or app the stage happens in.
+- Link only real, checked web addresses.
+
+WHERE TO SAVE
+- Save the finished copy in a guides folder inside the user's own project folder, or in their Documents folder. Do not save into other projects' folders.
+- If an Artifact tool is available, publish it as a private artifact too, and give the user the link.
+
+CHECK BEFORE HANDING OVER
+- Open the page once. Check every copy button, every path and every link.
+- Tick a box, reload, and check the tick stays. (Ticks save in their browser only.)
+==========================================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: one calm column. Big progress up top, stage cards below, each step a large tap target. */
+:root{
+  --bg:#eef3f6; --surface:#ffffff; --ink:#15222e; --muted:#51616f; --line:#d5dee5;
+  --accent:#0a6c8c; --accent-ink:#ffffff; --accent-soft:#dff0f6;
+  --good:#1c7f46; --good-soft:#dff3e6; --warn:#9a5b00; --warn-soft:#fbefd6;
+  --font-display:'Sora',system-ui,sans-serif; --font-body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1a23; --surface:#16252f; --ink:#e8f0f5; --muted:#9db0bf; --line:#2a3d4a;
+    --accent:#4cc3e6; --accent-ink:#06222c; --accent-soft:#13384a;
+    --good:#5bd08a; --good-soft:#143b27; --warn:#f0b34d; --warn-soft:#41300f;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1a23; --surface:#16252f; --ink:#e8f0f5; --muted:#9db0bf; --line:#2a3d4a;
+  --accent:#4cc3e6; --accent-ink:#06222c; --accent-soft:#13384a;
+  --good:#5bd08a; --good-soft:#143b27; --warn:#f0b34d; --warn-soft:#41300f;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:18px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 64px}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:1.9rem}
+h2{font-size:1.3rem}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header.top{display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.sub{color:var(--muted);margin:0}
+.progress-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.bar{height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width .3s}
+.progress-row{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.big{font-family:var(--font-display);font-size:1.5rem;font-variant-numeric:tabular-nums}
+.next{background:var(--accent-soft);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.next b{display:block;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:12px 16px;min-height:48px;font-weight:700;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+.btn.small{min-height:40px;padding:8px 12px;font-size:.95rem}
+nav.tabs{display:flex;gap:8px;overflow-x:auto;margin:6px 0 16px;padding-bottom:4px}
+nav.tabs button{white-space:nowrap;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:10px 16px;min-height:44px;cursor:pointer;font-weight:700}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden}
+.stage-head{display:flex;gap:14px;align-items:flex-start;padding:16px;border-bottom:1px solid var(--line)}
+.badge{flex:none;width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:1.2rem}
+.stage.done .badge{background:var(--good)}
+.stage-head .meta{color:var(--muted);font-size:.95rem;margin-top:4px}
+.stage-head .count{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:700;white-space:nowrap}
+.steps{list-style:none;margin:0;padding:0}
+.step{border-bottom:1px solid var(--line);padding:14px 16px}
+.step:last-child{border-bottom:0}
+.step.current{background:var(--accent-soft)}
+.step label{display:flex;gap:14px;align-items:flex-start;cursor:pointer}
+.step input[type=checkbox]{flex:none;width:28px;height:28px;margin:2px 0 0;accent-color:var(--good);cursor:pointer}
+.step.checked .txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0 42px}
+.chip{display:inline-flex;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px;max-width:100%}
+.chip code{font-family:ui-monospace,Consolas,monospace;font-size:.88rem;overflow-wrap:anywhere}
+.note{margin:10px 0 0 42px;padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--ink);font-size:.95rem}
+.note b{color:var(--warn)}
+.link{margin:10px 0 0 42px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px;display:flex;flex-direction:column;gap:12px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.cols{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.card h3{font-size:1.05rem}
+.card p{margin:0;color:var(--muted)}
+.tag{display:inline-block;align-self:flex-start;font-size:.8rem;font-weight:700;border-radius:99px;padding:2px 10px}
+.tag.good{background:var(--good-soft);color:var(--good)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+details{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;min-height:32px}
+details p{margin:10px 0 0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.foot{color:var(--muted);font-size:.9rem;margin-top:24px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1 id="gTitle"></h1>
+      <p class="sub" id="gSub"></p>
+    </div>
+    <div class="progress-card" aria-live="polite">
+      <div class="progress-row">
+        <span class="big" id="pct">0%</span>
+        <span id="count" class="sub">0 of 0 steps done</span>
+      </div>
+      <div class="bar" role="progressbar" aria-label="Overall progress" id="barwrap" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="bar" style="width:0%"></i></div>
+      <div class="next" id="next"></div>
+    </div>
+  </header>
+  <nav class="tabs" role="tablist" aria-label="Guide sections" id="tabbar"></nav>
+  <div id="views"></div>
+  <p class="foot"><span id="sources"></span> <button class="btn ghost small" id="reset" type="button">Reset my ticks</button></p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ======================================================================
+   EDIT ONLY THIS OBJECT. The sample below shows every feature.
+   Write backslashes twice inside strings, for example 'C:\\My Project\\file.txt'.
+   ====================================================================== */
+var GUIDE = {
+  title: 'Example Guide',
+  subtitle: 'Three short stages. Tick each step as you finish it. Your place is saved on this device.',
+  storageKey: 'guide-example-v1',
+  sources: 'Sources: replace this line with the real sources, or remove it.',
+
+  stages: [
+    {
+      id: 'a',
+      title: 'Open the settings page',
+      where: 'In your web browser',
+      time: 'About 2 minutes',
+      link: { href: 'https://example.com', text: 'Open the page' },
+      steps: [
+        { t: 'Open the web page and sign in.' },
+        { t: 'Tap your name, then Settings.' },
+        { t: 'Tap the box called Billing.', note: 'The wording can change a little. If a button looks different, send a screenshot.' }
+      ]
+    },
+    {
+      id: 'b',
+      title: 'Make a folder on your PC',
+      where: 'On your PC, in Windows Explorer',
+      time: 'About 1 minute',
+      steps: [
+        { t: 'Open Windows Explorer and make a new folder with this name:',
+          chips: [ { l: 'Folder name', v: 'Example Folder' }, { l: 'Full path', v: 'C:\\Example Folder' } ] },
+        { t: 'Inside it, make a text file named:', chips: [ { l: 'File name', v: 'notes.txt' } ] }
+      ]
+    },
+    {
+      id: 'c',
+      title: 'Give the job to Claude',
+      where: 'In the Claude app on your PC',
+      time: 'About 3 minutes, then wait',
+      steps: [
+        { t: 'Paste this message and press send:',
+          chips: [ { l: 'Message to paste', v: 'Read the file C:\\Example Folder\\notes.txt and tell me what it says in plain words.' } ] },
+        { t: 'Wait. Claude will tell you when it is done.' }
+      ]
+    }
+  ],
+
+  /* Optional extra tabs. Remove the whole array if not needed.
+     Each block has a heading h, optional text p, and optional cards.
+     A card has: kind ('good' or 'warn'), tag, h, p. */
+  tabs: [
+    {
+      id: 'expect',
+      title: 'What to expect',
+      blocks: [
+        { h: 'What will be different', p: 'Explain the change in two or three plain sentences.',
+          cards: [
+            { kind: 'good', tag: 'Better', h: 'Example benefit', p: 'One short sentence.' },
+            { kind: 'warn', tag: 'Different', h: 'Example change', p: 'One short sentence.' }
+          ] }
+      ]
+    }
+  ],
+
+  /* Optional "If stuck" tab. Remove the array if not needed. */
+  faq: [
+    { q: 'A button looks different from the steps', a: 'Screens change wording now and then. Take a screenshot and send it to Claude. It will point to the right button.' },
+    { q: 'Where do I keep private keys?', a: 'Only in the one file the steps name. Never paste them into a chat, an email or a website.' }
+  ]
+};
+
+/* ======================================================================
+   Rendering code. Do not edit unless something is broken.
+   ====================================================================== */
+(function(){
+  var STAGES=GUIDE.stages||[];
+  var store={};
+  try{ store=JSON.parse(localStorage.getItem(GUIDE.storageKey)||'{}')||{}; }catch(e){ store={}; }
+  function save(){ try{ localStorage.setItem(GUIDE.storageKey,JSON.stringify(store)); }catch(e){} }
+
+  document.title=GUIDE.title;
+  document.getElementById('gTitle').textContent=GUIDE.title;
+  document.getElementById('gSub').textContent=GUIDE.subtitle||'';
+  document.getElementById('sources').textContent=GUIDE.sources||'';
+
+  var toastEl=document.getElementById('toast'), toastTimer;
+  function toast(m){ toastEl.textContent=m; toastEl.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){toastEl.classList.remove('show');},2200); }
+  function fallbackCopy(text){
+    var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly','');
+    ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
+    var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta); return ok;
+  }
+  function copy(text){
+    function done(ok){ toast(ok?'Copied':'Copy did not work. Select the text and copy it by hand.'); }
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){done(true);},function(){done(fallbackCopy(text));});
+        return;
+      }
+    }catch(e){}
+    done(fallbackCopy(text));
+  }
+  function el(tag,attrs,kids){
+    var n=document.createElement(tag);
+    if(attrs) for(var k in attrs){ if(k==='class') n.className=attrs[k]; else if(k==='text') n.textContent=attrs[k]; else n.setAttribute(k,attrs[k]); }
+    (kids||[]).forEach(function(c){ n.appendChild(c); });
+    return n;
+  }
+
+  var total=0; STAGES.forEach(function(s){ total+=s.steps.length; });
+  var views=document.getElementById('views');
+  var stepsHost=el('section',{id:'tab-steps'});
+  views.appendChild(stepsHost);
+
+  var tabList=[{id:'steps',title:'Step by step'}];
+  (GUIDE.tabs||[]).forEach(function(t){ tabList.push({id:t.id,title:t.title}); });
+  if(GUIDE.faq&&GUIDE.faq.length) tabList.push({id:'help',title:'If stuck'});
+
+  (GUIDE.tabs||[]).forEach(function(t){
+    var sec=el('section',{id:'tab-'+t.id}); sec.hidden=true;
+    (t.blocks||[]).forEach(function(b){
+      var panel=el('div',{class:'panel'});
+      panel.appendChild(el('h2',{text:b.h}));
+      if(b.p) panel.appendChild(el('p',{text:b.p}));
+      if(b.cards&&b.cards.length){
+        var cols=el('div',{class:'cols'});
+        b.cards.forEach(function(c){
+          cols.appendChild(el('div',{class:'card'},[
+            el('span',{class:'tag '+(c.kind==='warn'?'warn':'good'),text:c.tag||''}),
+            el('h3',{text:c.h}), el('p',{text:c.p})
+          ]));
+        });
+        panel.appendChild(cols);
+      }
+      sec.appendChild(panel);
+    });
+    views.appendChild(sec);
+  });
+  if(GUIDE.faq&&GUIDE.faq.length){
+    var h=el('section',{id:'tab-help'}); h.hidden=true;
+    GUIDE.faq.forEach(function(f,i){
+      var d=el('details',null,[el('summary',{text:f.q}),el('p',{text:f.a})]);
+      if(i===0) d.setAttribute('open','');
+      h.appendChild(d);
+    });
+    views.appendChild(h);
+  }
+
+  function showTab(name){
+    tabList.forEach(function(t){ var s=document.getElementById('tab-'+t.id); if(s) s.hidden=(t.id!==name); });
+    Array.prototype.forEach.call(document.querySelectorAll('nav.tabs button'),function(b){ b.setAttribute('aria-selected',String(b.getAttribute('data-tab')===name)); });
+  }
+  var bar=document.getElementById('tabbar');
+  if(tabList.length<2){ bar.hidden=true; }
+  tabList.forEach(function(t,i){
+    var b=el('button',{role:'tab','data-tab':t.id,'aria-selected':String(i===0),type:'button',text:t.title});
+    b.addEventListener('click',function(){ showTab(t.id); });
+    bar.appendChild(b);
+  });
+
+  function firstOpen(){
+    for(var i=0;i<STAGES.length;i++) for(var j=0;j<STAGES[i].steps.length;j++){
+      if(!store[STAGES[i].id+'-'+j]) return {s:i,j:j};
+    }
+    return null;
+  }
+
+  function render(){
+    stepsHost.textContent='';
+    var cur=firstOpen(), doneCount=0;
+    STAGES.forEach(function(st,si){
+      var d=0; st.steps.forEach(function(_,j){ if(store[st.id+'-'+j]) d++; });
+      doneCount+=d;
+      var stage=el('div',{class:'stage'+(d===st.steps.length?' done':''),id:'stage-'+st.id});
+      stage.appendChild(el('div',{class:'stage-head'},[
+        el('div',{class:'badge',text:d===st.steps.length?'\u2713':String(si+1)}),
+        el('div',null,[ el('h2',{text:st.title}), el('div',{class:'meta',text:(st.where||'')+(st.time?' \u00b7 '+st.time:'')}) ]),
+        el('div',{class:'count',text:d+'/'+st.steps.length})
+      ]));
+      var ol=el('ol',{class:'steps'});
+      st.steps.forEach(function(step,j){
+        var id=st.id+'-'+j, checked=!!store[id], isCur=cur&&cur.s===si&&cur.j===j;
+        var li=el('li',{class:'step'+(checked?' checked':'')+(isCur?' current':''),id:'step-'+id});
+        var cb=el('input',{type:'checkbox',id:'cb-'+id}); cb.checked=checked;
+        cb.addEventListener('change',function(){ store[id]=cb.checked; save(); render(); });
+        li.appendChild(el('label',{for:'cb-'+id},[cb, el('span',{class:'txt',text:step.t})]));
+        if(step.chips){
+          var chips=el('div',{class:'chips'});
+          step.chips.forEach(function(c){
+            var b=el('button',{class:'btn small',type:'button','aria-label':'Copy '+c.l,text:'Copy'});
+            b.addEventListener('click',function(){ copy(c.v); });
+            chips.appendChild(el('span',{class:'chip',title:c.l},[el('code',{text:c.v}),b]));
+          });
+          li.appendChild(chips);
+        }
+        if(step.note){ li.appendChild(el('div',{class:'note'},[el('b',{text:'Note: '}),document.createTextNode(step.note)])); }
+        if(j===0&&st.link){
+          li.appendChild(el('div',{class:'link'},[el('a',{href:st.link.href,target:'_blank',rel:'noopener noreferrer',text:st.link.text})]));
+        }
+        ol.appendChild(li);
+      });
+      stage.appendChild(ol);
+      stepsHost.appendChild(stage);
+    });
+
+    var pct=total?Math.round(doneCount/total*100):0;
+    document.getElementById('pct').textContent=pct+'%';
+    document.getElementById('count').textContent=doneCount+' of '+total+' steps done';
+    document.getElementById('bar').style.width=pct+'%';
+    document.getElementById('barwrap').setAttribute('aria-valuenow',String(pct));
+    var nx=document.getElementById('next'); nx.textContent='';
+    if(cur){
+      var step=STAGES[cur.s].steps[cur.j];
+      nx.appendChild(el('div',null,[el('b',{text:'Next step \u00b7 Stage '+(cur.s+1)}),document.createTextNode(step.t)]));
+      var go=el('button',{class:'btn small',type:'button',text:'Take me there'});
+      go.addEventListener('click',function(){
+        showTab('steps');
+        var t=document.getElementById('step-'+STAGES[cur.s].id+'-'+cur.j);
+        if(t){ t.scrollIntoView({behavior:'smooth',block:'center'}); }
+      });
+      nx.appendChild(go);
+    }else{
+      nx.appendChild(el('div',null,[el('b',{text:'All done'}),document.createTextNode('Every step is ticked.')]));
+    }
+  }
+
+  document.getElementById('reset').addEventListener('click',function(){ store={}; save(); render(); toast('Ticks cleared'); });
+  render();
+})();
+</script>
+</body>
+</html>

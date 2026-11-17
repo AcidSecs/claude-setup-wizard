@@ -1,0 +1,11 @@
+{
+  "name": "vn-setup-wizard",
+  "displayName": "Setup Wizard for Claude",
+  "version": "0.1.0",
+  "description": "A calm, one-question-at-a-time wizard that explains Claude's parts (projects, skills, plugins, connectors) in plain words and switches the companion modules on or off.",
+  "author": { "name": "VectorNine Systems Inc. & Acid Secs Productions Inc." },
+  "homepage": "https://github.com/AcidSecs/claude-setup-wizard",
+  "repository": "https://github.com/AcidSecs/claude-setup-wizard",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": ["setup", "onboarding", "wizard", "beginner", "settings", "projects"]
+}
