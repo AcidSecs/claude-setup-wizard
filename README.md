@@ -18,4 +18,5 @@ Nothing. It reads and writes one local settings file only.
 Companion plugins: claude-ledger-starter, claude-handoff-helper, claude-session-archive, claude-project-hub, claude-builder-standards, claude-network-link.
 
 Created by Soroosh Hedayat
+
 Designed in Collaboration by: VectorNine Systems Inc. & Acid Secs Productions Inc.
